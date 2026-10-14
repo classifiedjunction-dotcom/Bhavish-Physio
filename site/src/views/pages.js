@@ -1,5 +1,6 @@
 import { html, raw, safeUrl, escape, lines } from '../lib/html.js';
 import { markdown } from '../lib/markdown.js';
+import { aboutArt } from './art.js';
 import {
   icon, telHref, waHref, visual, avatar, sectionHead, pageHero, serviceCard, conditionCard, teamCard, postCard,
   faqList, bookingForm, contactList, ctaBand, formatDate,
@@ -33,7 +34,7 @@ ${pageHero('About us', [['About us']], s.clinic.tagline)}
     <div class="split-visual reveal">
       ${safeUrl(a.image)
         ? html`<img class="about-img" src="${safeUrl(a.image)}" alt="${s.clinic.name}">`
-        : html`<img class="about-img art" src="/img/about-art.svg" alt="">`}
+        : html`<div class="about-img art">${aboutArt()}</div>`}
     </div>
     <div class="split-copy">
       ${sectionHead(s.sections, 'about', { center: false })}

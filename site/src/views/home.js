@@ -1,5 +1,6 @@
 import { html, raw, safeUrl } from '../lib/html.js';
 import { markdown } from '../lib/markdown.js';
+import { aboutArt } from './art.js';
 import {
   icon, isOn, telHref, waHref, visual, sectionHead, serviceCard, conditionCard, teamCard, postCard,
   testimonialCard, faqList, bookingForm, contactList, stars,
@@ -57,7 +58,7 @@ function aboutBlock(ctx) {
       <div class="split-visual reveal">
         ${safeUrl(a.image)
           ? html`<img class="about-img" src="${safeUrl(a.image)}" alt="${s.clinic.name}" loading="lazy">`
-          : html`<img class="about-img art" src="/img/about-art.svg" alt="" loading="lazy">`}
+          : html`<div class="about-img art">${aboutArt()}</div>`}
         ${years > 0 ? html`<div class="exp-badge"><strong>${years}+</strong><span>Years of trusted care</span></div>` : ''}
       </div>
       <div class="split-copy reveal">

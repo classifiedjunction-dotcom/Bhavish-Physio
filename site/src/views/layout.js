@@ -5,7 +5,7 @@ const HEX = /^#[0-9a-f]{3,8}$/i;
 const color = (v, fallback) => (HEX.test(String(v || '')) ? v : fallback);
 
 function themeStyle(theme) {
-  return `:root{--primary:${color(theme.primary, '#0f2340')};--accent:${color(theme.accent, '#e9a23b')};--bg:${color(theme.background, '#f7f5f0')}}`;
+  return `:root{--primary:${color(theme.primary, '#0a2558')};--accent:${color(theme.accent, '#2cc5b4')};--bg:${color(theme.background, '#f3f7fc')}}`;
 }
 
 function brand(clinic, cls = 'brand') {
@@ -132,12 +132,12 @@ ${isOn(seo.noindex) ? raw('<meta name="robots" content="noindex, nofollow">') : 
 <meta property="og:description" content="${desc}">
 <meta property="og:url" content="${origin + path}">
 ${ogImage ? html`<meta property="og:image" content="${absolute(ogImage)}">` : ''}
-<meta name="theme-color" content="${color(s.theme.primary, '#0f2340')}">
+<meta name="theme-color" content="${color(s.theme.primary, '#0a2558')}">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
-<link rel="stylesheet" href="/css/site.css?v=3">
+<link rel="stylesheet" href="/css/site.css?v=4">
 <style>${raw(themeStyle(s.theme))}</style>
 ${jsonLd ? raw(`<script type="application/ld+json">${JSON.stringify(jsonLd).replace(/</g, '\\u003c')}</script>`) : ''}
 </head>

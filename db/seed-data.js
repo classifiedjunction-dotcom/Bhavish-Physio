@@ -130,9 +130,9 @@ export const settings = {
     copyright: 'ReviveCare Physiotherapy. All rights reserved.',
   },
   theme: {
-    primary: '#0f2340',
-    accent: '#e9a23b',
-    background: '#f7f5f0',
+    primary: '#0a2558',
+    accent: '#2cc5b4',
+    background: '#f3f7fc',
   },
   seo: {
     metaTitle: 'ReviveCare Physiotherapy | Physiotherapy Clinic in Chennai',
