@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 430" role="img" aria-label="Illustration of a person stretching">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#e6ecf4"/>
+      <stop offset="1" stop-color="#f6ead6"/>
+    </linearGradient>
+    <pattern id="dots" width="16" height="16" patternUnits="userSpaceOnUse">
+      <circle cx="2" cy="2" r="1.6" fill="#0f2340" opacity=".12"/>
+    </pattern>
+  </defs>
+  <rect width="400" height="430" fill="#eef1f6"/>
+  <rect x="24" y="24" width="120" height="96" fill="url(#dots)"/>
+  <rect x="270" y="320" width="110" height="90" fill="url(#dots)"/>
+  <circle cx="205" cy="225" r="150" fill="url(#bg)"/>
+  <circle cx="205" cy="225" r="176" fill="none" stroke="#e9a23b" stroke-width="2" stroke-dasharray="3 11" stroke-linecap="round" opacity=".8"/>
+  <ellipse cx="200" cy="378" rx="120" ry="11" fill="#0f2340" opacity=".1"/>
+  <!-- motion arcs -->
+  <path d="M300 70a70 70 0 0 1 30 52" fill="none" stroke="#e9a23b" stroke-width="5" stroke-linecap="round"/>
+  <path d="M318 52a95 95 0 0 1 36 72" fill="none" stroke="#e9a23b" stroke-width="5" stroke-linecap="round" opacity=".45"/>
+  <!-- figure -->
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M196 250 150 312 112 366" stroke="#0f2340" stroke-width="26"/>
+    <path d="M196 250 252 302 268 366" stroke="#1d3a63" stroke-width="26"/>
+    <path d="M216 152 152 208" stroke="#1d3a63" stroke-width="19"/>
+    <path d="M224 140 200 250" stroke="#0f2340" stroke-width="36"/>
+    <path d="M226 150 C 250 130 272 108 292 80" stroke="#e9a23b" stroke-width="19"/>
+  </g>
+  <circle cx="236" cy="104" r="25" fill="#0f2340"/>
+  <circle cx="292" cy="78" r="11" fill="#e9a23b"/>
+  <!-- floating cards -->
+  <g transform="translate(36 210)">
+    <rect width="96" height="58" rx="14" fill="#fff"/>
+    <polyline points="14 36 28 36 36 20 48 46 56 30 82 30" fill="none" stroke="#e9a23b" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <g transform="translate(286 170)">
+    <rect width="78" height="78" rx="18" fill="#0f2340"/>
+    <path d="M24 40l10 10 20-22" fill="none" stroke="#e9a23b" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+</svg>

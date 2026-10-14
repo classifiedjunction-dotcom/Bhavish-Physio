@@ -1,0 +1,32 @@
+{
+  // Admin portal: login-protected editor for all website content.
+  "name": "physio-admin",
+  "main": "src/index.js",
+  "compatibility_date": "2025-09-01",
+  "assets": {
+    "directory": "./public",
+    "binding": "ASSETS"
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "physio-db",
+      "database_id": "aafafad8-a891-4e6a-9a45-0217ba03f25a",
+      "migrations_dir": "../db/migrations"
+    }
+  ],
+  "kv_namespaces": [
+    {
+      "binding": "MEDIA",
+      "id": "53534c48123c41b1964101a4a841859e"
+    }
+  ],
+  "vars": {
+    // Public website address, used for "View website" links.
+    // For local development, admin/.dev.vars overrides this with SITE_URL=http://127.0.0.1:8787
+    "SITE_URL": "https://physio-site.digibillmate-onboarding.workers.dev"
+  },
+  "observability": {
+    "enabled": true
+  }
+}

@@ -1,0 +1,8 @@
+node_modules/
+.wrangler/
+.wrangler-local/
+.dev.vars*
+*.local.txt
+*.local.sql
+db/seed.sql
+scratch/

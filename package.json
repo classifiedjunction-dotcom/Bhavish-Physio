@@ -1,0 +1,19 @@
+{
+  "name": "physio-website",
+  "private": true,
+  "type": "module",
+  "description": "Physiotherapy clinic website + admin portal on Cloudflare Workers, D1 and KV",
+  "scripts": {
+    "dev:site": "wrangler dev -c site/wrangler.jsonc --port 8787 --persist-to .wrangler-local",
+    "dev:admin": "wrangler dev -c admin/wrangler.jsonc --port 8788 --persist-to .wrangler-local",
+    "db:migrate:local": "wrangler d1 migrations apply physio-db --local -c site/wrangler.jsonc --persist-to .wrangler-local",
+    "db:migrate:remote": "wrangler d1 migrations apply physio-db --remote -c site/wrangler.jsonc",
+    "db:seed:local": "node scripts/build-seed.mjs && wrangler d1 execute physio-db --local -c site/wrangler.jsonc --persist-to .wrangler-local --file db/seed.sql",
+    "db:seed:remote": "node scripts/build-seed.mjs && wrangler d1 execute physio-db --remote -c site/wrangler.jsonc --file db/seed.sql",
+    "admin:create:local": "node scripts/create-admin.mjs && wrangler d1 execute physio-db --local -c site/wrangler.jsonc --persist-to .wrangler-local --file db/admin-user.local.sql",
+    "admin:create:remote": "node scripts/create-admin.mjs admin live && wrangler d1 execute physio-db --remote -c site/wrangler.jsonc --file db/admin-user.local.sql",
+    "deploy:site": "wrangler deploy -c site/wrangler.jsonc",
+    "deploy:admin": "wrangler deploy -c admin/wrangler.jsonc",
+    "deploy": "npm run deploy:site && npm run deploy:admin"
+  }
+}
