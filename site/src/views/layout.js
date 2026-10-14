@@ -137,7 +137,7 @@ ${ogImage ? html`<meta property="og:image" content="${absolute(ogImage)}">` : ''
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
-<link rel="stylesheet" href="/css/site.css?v=4">
+<link rel="stylesheet" href="/css/site.css?v=5">
 <style>${raw(themeStyle(s.theme))}</style>
 ${jsonLd ? raw(`<script type="application/ld+json">${JSON.stringify(jsonLd).replace(/</g, '\\u003c')}</script>`) : ''}
 </head>
@@ -174,10 +174,16 @@ ${isOn(seo.previewBanner) && seo.previewText ? html`<div class="preview-bar">${s
 ${body}
 </main>
 ${footer(ctx)}
-<div class="floating">
-  ${ct.phone ? html`<a class="fab fab-call" href="${telHref(ct.phone)}" aria-label="Call us">${icon('phone')}</a>` : ''}
-  ${wa ? html`<a class="fab fab-wa" href="${wa}" target="_blank" rel="noopener" aria-label="Chat on WhatsApp">${icon('whatsapp')}<span>Chat with us</span></a>` : ''}
-</div>
+${wa ? html`<div class="floating"><a class="fab fab-wa" href="${wa}" target="_blank" rel="noopener" aria-label="Chat on WhatsApp">${icon('whatsapp')}<span>Chat with us</span></a></div>` : ''}
+<nav class="mobile-bar" aria-label="Quick actions">
+  <a class="mb-btn mb-book" href="${path === '/' || path === '/contact' ? '#book' : '/contact#book'}">${icon('calendar')} ${s.hero.primaryLabel || 'Book Appointment'}</a>
+  ${wa || ct.phone
+    ? html`<div class="mb-row">
+        ${wa ? html`<a class="mb-btn mb-wa" href="${wa}" target="_blank" rel="noopener">${icon('whatsapp')} WhatsApp</a>` : ''}
+        ${ct.phone ? html`<a class="mb-btn mb-call" href="${telHref(ct.phone)}">${icon('phone')} Call Now</a>` : ''}
+      </div>`
+    : ''}
+</nav>
 <script src="/js/site.js?v=3" defer></script>
 </body>
 </html>`;
