@@ -31,7 +31,18 @@ export function initials(name) {
 export function avatar(photo, name, variant = 0, cls = 'avatar') {
   const url = safeUrl(photo);
   if (url) return html`<img class="${cls}" src="${url}" alt="${name}" loading="lazy">`;
-  return html`<span class="${cls} avatar-initials ph-${Math.abs(Number(variant) || 0) % 4}" aria-hidden="true">${initials(name)}</span>`;
+  return html`<span class="${cls} avatar-doctor ph-${Math.abs(Number(variant) || 0) % 4}" role="img" aria-label="Generic doctor illustration">
+    <svg viewBox="0 0 160 160" aria-hidden="true" focusable="false">
+      <circle cx="80" cy="80" r="66" fill="rgba(255,255,255,.48)"/>
+      <path d="M54 39h52l11 18 20 13v48H23V70l20-13 11-18Z" fill="#fff" stroke="#0a2558" stroke-width="4" stroke-linejoin="round"/>
+      <path d="m54 40 26 27 26-27M68 54l12 13 12-13" fill="none" stroke="#0a2558" stroke-width="4" stroke-linejoin="round"/>
+      <path d="M63 56v13c0 24 34 24 34 0V56" fill="none" stroke="#2bbdaf" stroke-width="5" stroke-linecap="round"/>
+      <circle cx="97" cy="76" r="6" fill="#2bbdaf" stroke="#0a2558" stroke-width="3"/>
+      <rect x="36" y="83" width="25" height="25" rx="7" fill="#e5fbf8" stroke="#2bbdaf" stroke-width="2"/>
+      <path d="M48.5 89v13m-6.5-6.5h13" stroke="#0a2558" stroke-width="3.5" stroke-linecap="round"/>
+      <path d="M72 96h29" stroke="#d5e2ea" stroke-width="4" stroke-linecap="round"/>
+    </svg>
+  </span>`;
 }
 
 export function stars(n = 5) {
@@ -139,44 +150,6 @@ export function faqList(faqs) {
   </div>`;
 }
 
-export function bookingForm({ s, c }, { compact = false, id = '' } = {}) {
-  const services = s.booking.services?.length ? s.booking.services : c.services.map((x) => x.title);
-  const slots = s.booking.timeSlots || [];
-  const branches = c.branches || [];
-  const success = s.booking.successMessage || 'Thank you! We will call you shortly to confirm.';
-
-  if (compact) {
-    return html`<form class="booking-form compact" data-booking data-success="${success}" action="/api/appointments" method="post" ${id ? raw(`id="${escape(id)}"`) : ''}>
-      <label class="field"><span>Your name</span><input name="name" required maxlength="80" autocomplete="name" placeholder="Full name"></label>
-      <label class="field"><span>Phone number</span><input name="phone" type="tel" required maxlength="20" autocomplete="tel" placeholder="10-digit mobile"></label>
-      <label class="field"><span>What do you need help with?</span>
-        <select name="service">${services.map((o) => html`<option>${o}</option>`)}</select>
-      </label>
-      <input class="hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
-      <button class="btn btn-accent btn-block" type="submit">Request a call back ${icon('arrow')}</button>
-      <p class="form-status" role="status" aria-live="polite"></p>
-    </form>`;
-  }
-
-  return html`<form class="booking-form" data-booking data-success="${success}" action="/api/appointments" method="post" ${id ? raw(`id="${escape(id)}"`) : ''}>
-    <div class="form-grid">
-      <label class="field"><span>Full name *</span><input name="name" required maxlength="80" autocomplete="name"></label>
-      <label class="field"><span>Phone number *</span><input name="phone" type="tel" required maxlength="20" autocomplete="tel"></label>
-      <label class="field"><span>Email <em>(optional)</em></span><input name="email" type="email" maxlength="120" autocomplete="email"></label>
-      <label class="field"><span>Service</span><select name="service">${services.map((o) => html`<option>${o}</option>`)}</select></label>
-      <label class="field"><span>Preferred date</span><input name="date" type="date" data-min-today></label>
-      <label class="field"><span>Preferred time</span><select name="time"><option value="">Any time</option>${slots.map((o) => html`<option>${o}</option>`)}</select></label>
-      ${branches.length > 1
-        ? html`<label class="field full"><span>Branch</span><select name="branch">${branches.map((b) => html`<option>${b.name}</option>`)}</select></label>`
-        : ''}
-      <label class="field full"><span>Describe your problem <em>(optional)</em></span><textarea name="message" rows="3" maxlength="1000"></textarea></label>
-    </div>
-    <input class="hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
-    <button class="btn btn-accent btn-block btn-lg" type="submit">Send appointment request ${icon('arrow')}</button>
-    <p class="form-status" role="status" aria-live="polite"></p>
-  </form>`;
-}
-
 export function contactList({ s }, { light = false } = {}) {
   const ct = s.contact;
   return html`<ul class="contact-list ${light ? 'light' : ''}">
@@ -194,12 +167,12 @@ export function ctaBand({ s }) {
   return html`<section class="cta-band">
     <div class="wrap cta-inner">
       <div>
-        <h2>Ready to start feeling better?</h2>
-        <p>Book an assessment with one of our physiotherapists today.</p>
+        <h2>Need help choosing a service?</h2>
+        <p>Call or WhatsApp the clinic to ask about physiotherapy and availability.</p>
       </div>
       <div class="cta-actions">
-        <a class="btn btn-accent btn-lg" href="/contact#book">${s.hero.primaryLabel || 'Book Appointment'} ${icon('arrow')}</a>
-        ${ct.phone ? html`<a class="btn btn-ghost-light btn-lg" href="${telHref(ct.phone)}">${icon('phone')} ${ct.phone}</a>` : ''}
+        ${ct.phone ? html`<a class="btn btn-accent btn-lg" href="${telHref(ct.phone)}">${icon('phone')} Call the clinic</a>` : ''}
+        ${ct.whatsapp ? html`<a class="btn btn-ghost-light btn-lg" href="${waHref(ct.whatsapp)}" target="_blank" rel="noopener">${icon('whatsapp')} WhatsApp</a>` : ''}
       </div>
     </div>
   </section>`;

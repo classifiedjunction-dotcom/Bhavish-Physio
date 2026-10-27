@@ -1,16 +1,16 @@
-import { html, raw, safeUrl } from '../lib/html.js';
+import { html, raw, safeUrl, lines } from '../lib/html.js';
 import { markdown } from '../lib/markdown.js';
 import { aboutArt } from './art.js';
 import {
   icon, isOn, telHref, waHref, visual, sectionHead, serviceCard, conditionCard, teamCard, postCard,
-  testimonialCard, faqList, bookingForm, contactList, stars,
+  faqList, stars,
 } from './ui.js';
 
 function hero(ctx) {
   const { s, c } = ctx;
   const h = s.hero;
   const ct = s.contact;
-  const wa = ct.whatsapp ? waHref(ct.whatsapp, `Hi ${s.clinic.name}, I would like to book an appointment.`) : '';
+  const wa = ct.whatsapp ? waHref(ct.whatsapp, `Hi ${s.clinic.name}, I would like to ask about physiotherapy.`) : '';
   const photo = safeUrl(h.image);
   const highlights = c.features.slice(0, 3).map((f) => f.title);
 
@@ -18,11 +18,11 @@ function hero(ctx) {
     <div class="hero-bg" aria-hidden="true"></div>
     <div class="wrap hero-grid">
       <div class="hero-copy">
-        ${h.badge ? html`<span class="badge-pill">${stars(5)} ${h.badge}</span>` : ''}
+        ${h.badge ? html`<span class="badge-pill">${h.badge}</span>` : ''}
         <h1>${h.title}${h.highlight ? html` <em>${h.highlight}</em>` : ''}</h1>
         ${h.subtitle ? html`<p class="lead">${h.subtitle}</p>` : ''}
         <div class="hero-ctas">
-          <a class="btn btn-accent btn-lg" href="#book">${h.primaryLabel || 'Book Appointment'} ${icon('arrow')}</a>
+          ${ct.phone ? html`<a class="btn btn-accent btn-lg" href="${telHref(ct.phone)}">${icon('phone')} Call the clinic</a>` : ''}
           ${wa ? html`<a class="btn btn-wa btn-lg" href="${wa}" target="_blank" rel="noopener">${icon('whatsapp')} ${h.secondaryLabel || 'WhatsApp Us'}</a>` : ''}
         </div>
         ${highlights.length ? html`<ul class="hero-points">${highlights.map((t) => html`<li>${icon('check')} ${t}</li>`)}</ul>` : ''}
@@ -30,13 +30,17 @@ function hero(ctx) {
       <div class="hero-side">
         ${photo
           ? html`<figure class="hero-photo"><img src="${photo}" alt="${s.clinic.name}" fetchpriority="high"></figure>`
-          : html`<div class="quick-card">
+          : html`<div class="quick-card clinic-card">
               <div class="quick-head">
-                <span class="icon-chip">${icon('calendar')}</span>
-                <div><h2>Book a visit</h2><p>Leave your number — we’ll call you back to confirm a time.</p></div>
+                <span class="icon-chip">${icon('pin')}</span>
+                <div><h2>${c.branches[0]?.name || s.clinic.name}</h2><p>${c.branches[0]?.address || s.contact.address || 'Physiotherapy clinic in Chennai'}</p></div>
               </div>
-              ${bookingForm(ctx, { compact: true })}
-              ${ct.hours?.[0] ? html`<p class="quick-foot">${icon('clock')} ${ct.hours[0].days}: ${ct.hours[0].time}</p>` : ''}
+              ${ct.hours?.length ? html`<div class="clinic-hours">${ct.hours.map((h) => html`<p>${icon('clock')} <span>${h.days}: ${h.time}</span></p>`)}</div>` : ''}
+              <div class="btn-row">
+                ${ct.phone ? html`<a class="btn btn-accent btn-block" href="${telHref(ct.phone)}">${icon('phone')} Call the clinic</a>` : ''}
+                ${wa ? html`<a class="btn btn-wa btn-block" href="${wa}" target="_blank" rel="noopener">${icon('whatsapp')} WhatsApp</a>` : ''}
+              </div>
+              ${c.branches[0]?.mapLink ? html`<a class="link-arrow clinic-directions" href="${safeUrl(c.branches[0].mapLink)}" target="_blank" rel="noopener">Get directions ${icon('arrow')}</a>` : ''}
             </div>`}
       </div>
     </div>
@@ -77,11 +81,10 @@ function aboutBlock(ctx) {
 export function homePage(ctx) {
   const { s, c } = ctx;
   const sec = s.sections;
+  const ct = s.contact;
+  const practoStoriesUrl = 'https://www.practo.com/chennai/doctor/sudha-18-physiotherapist/recommended?practice_id=1238501&referrer=establishment_profile';
+  const wa = ct.whatsapp ? waHref(ct.whatsapp, `Hi ${s.clinic.name}, I would like to ask about physiotherapy.`) : '';
   const show = (k) => isOn(sec[`${k}Show`]) && (k === 'about' || c[k]?.length);
-  const avg = c.testimonials.length
-    ? (c.testimonials.reduce((n, t) => n + (Number(t.rating) || 5), 0) / c.testimonials.length).toFixed(1)
-    : null;
-
   return html`
 ${hero(ctx)}
 
@@ -102,7 +105,7 @@ ${show('conditions')
       <div class="wrap">
         ${sectionHead(sec, 'conditions')}
         <div class="grid grid-4 conditions-grid">${c.conditions.map(conditionCard)}</div>
-        <p class="center-note">Don’t see your condition? <a href="/contact#book">Talk to us</a> — we treat many more.</p>
+        <p class="center-note">Not sure which service is right for you? <a href="/contact">Call or WhatsApp the clinic</a>.</p>
       </div>
     </section>`
   : ''}
@@ -129,34 +132,32 @@ ${show('features')
     </section>`
   : ''}
 
-${show('testimonials')
-  ? html`<section class="section" id="reviews">
+${s.sections.testimonialsShow && s.social.practoProfile
+  ? html`<section class="section" id="reviews"><div class="wrap review-link-card">
+      <div><span class="eyebrow">Practo stories</span><h2>125 patient stories</h2><p>Practo currently shows a 98% recommendation from 125 patients. Read patient stories directly on Practo.</p></div>
+      <a class="btn btn-primary" href="${safeUrl(practoStoriesUrl)}" target="_blank" rel="noopener">Read stories on Practo ${icon('arrow')}</a>
+    </div></section>`
+  : ''}
+
+${show('team')
+  ? html`<section class="section alt team-section" id="team">
       <div class="wrap">
-        <div class="head-row">
-          ${sectionHead(sec, 'testimonials', { center: false })}
-          <div class="rating-summary">
-            <strong>${avg}</strong>
-            <div>${stars(Math.round(avg))}<small>Average from ${c.testimonials.length} reviews</small></div>
-          </div>
-        </div>
-        <div class="carousel" data-carousel>
-          <div class="carousel-track">${c.testimonials.map(testimonialCard)}</div>
-          <div class="carousel-nav">
-            <button type="button" data-prev aria-label="Previous reviews">${icon('left')}</button>
-            <button type="button" data-next aria-label="Next reviews">${icon('right')}</button>
-          </div>
-        </div>
-        ${safeUrl(s.social.googleReviews) ? html`<div class="center-row"><a class="btn btn-outline" href="${safeUrl(s.social.googleReviews)}" target="_blank" rel="noopener">${icon('google')} Read our Google reviews</a></div>` : ''}
+        ${sectionHead(sec, 'team', { center: false })}
+        <div class="team-showcase">${c.team.slice(0, 4).map(teamCard)}</div>
+        <div class="center-row"><a class="btn btn-outline" href="/team">View Dr. Sudha’s profile ${icon('arrow')}</a></div>
       </div>
     </section>`
   : ''}
 
-${show('team')
-  ? html`<section class="section alt" id="team">
+${c.branches.length
+  ? html`<section class="section single-location-section" id="locations">
       <div class="wrap">
-        ${sectionHead(sec, 'team')}
-        <div class="grid grid-4">${c.team.slice(0, 4).map(teamCard)}</div>
-        <div class="center-row"><a class="btn btn-outline" href="/team">Meet the full team ${icon('arrow')}</a></div>
+        <div class="section-head center"><span class="eyebrow">Our clinic</span><h2>Visit us in Porur</h2><p>One clinic for physiotherapy care in Porur, Chennai.</p></div>
+        ${c.branches.slice(0, 1).map((b) => html`<article class="card location-card single-location-card">
+          <span class="icon-chip">${icon('pin')}</span>
+          <div class="single-location-copy"><h3>${b.name}</h3>${b.address ? html`<p>${lines(b.address)}</p>` : ''}${b.hours ? html`<p class="muted">${icon('clock')} ${b.hours}</p>` : ''}</div>
+          <div class="btn-row single-location-actions">${b.phone ? html`<a class="btn btn-outline btn-sm" href="${telHref(b.phone)}">${icon('phone')} Call clinic</a>` : ''}${safeUrl(b.mapLink) ? html`<a class="link-arrow" href="${safeUrl(b.mapLink)}" target="_blank" rel="noopener">Get directions ${icon('arrow')}</a>` : ''}</div>
+        </article>`)}
       </div>
     </section>`
   : ''}
@@ -190,16 +191,13 @@ ${show('posts')
     </section>`
   : ''}
 
-<section class="section dark booking-section" id="book">
-  <div class="wrap booking-grid">
-    <div class="booking-info">
-      <span class="eyebrow">Get in touch</span>
-      <h2>${s.booking.title || 'Book an appointment'}</h2>
-      ${s.booking.intro ? html`<p class="lead">${s.booking.intro}</p>` : ''}
-      ${contactList(ctx, { light: true })}
-      ${s.contact.whatsapp ? html`<a class="btn btn-wa" href="${waHref(s.contact.whatsapp, `Hi ${s.clinic.name}, I would like to book an appointment.`)}" target="_blank" rel="noopener">${icon('whatsapp')} Quick book on WhatsApp</a>` : ''}
+<section class="section dark booking-section" id="contact-cta">
+  <div class="wrap contact-cta-grid">
+    <div><span class="eyebrow">Get in touch</span><h2>Speak with the clinic</h2><p class="lead">Call or WhatsApp to ask about services, timings and availability.</p></div>
+    <div class="btn-row">
+      ${ct.phone ? html`<a class="btn btn-accent btn-lg" href="${telHref(ct.phone)}">${icon('phone')} Call the clinic</a>` : ''}
+      ${wa ? html`<a class="btn btn-wa btn-lg" href="${wa}" target="_blank" rel="noopener">${icon('whatsapp')} WhatsApp us</a>` : ''}
     </div>
-    <div class="form-card">${bookingForm(ctx)}</div>
   </div>
 </section>`;
 }

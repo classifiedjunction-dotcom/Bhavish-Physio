@@ -21,7 +21,7 @@ function brand(clinic, cls = 'brand') {
 
 function navigation({ s, c }, path) {
   const active = (prefix) => (prefix === '/' ? path === '/' : path === prefix || path.startsWith(prefix + '/')) ? 'active' : '';
-  const aboutActive = ['/about', '/team', '/gallery', '/branches'].some((p) => active(p)) ? 'active' : '';
+  const aboutActive = ['/about', '/team'].some((p) => active(p)) ? 'active' : '';
   const sub = (label, items) =>
     html`<button class="sub-toggle" type="button" aria-expanded="false" aria-label="Show ${label} menu">${icon('down')}</button>
       <div class="sub">${items}</div>`;
@@ -30,9 +30,7 @@ function navigation({ s, c }, path) {
     <li><a class="${active('/')}" href="/">Home</a></li>
     <li class="has-sub">
       <a class="${aboutActive}" href="/about">About ${icon('down', 'icon caret')}</a>
-      ${sub('About', html`<a href="/about">About us</a><a href="/team">Our team</a><a href="/gallery">Gallery</a>${
-        c.branches.length ? html`<a href="/branches">Branches</a>` : ''
-      }`)}
+      ${sub('About', html`<a href="/about">About us</a><a href="/team">Dr. Sudha</a>`)}
     </li>
     <li class="has-sub">
       <a class="${active('/services')}" href="/services">Services ${icon('down', 'icon caret')}</a>
@@ -42,7 +40,7 @@ function navigation({ s, c }, path) {
       <a class="${active('/conditions')}" href="/conditions">Conditions ${icon('down', 'icon caret')}</a>
       ${sub('Conditions', c.conditions.map((x) => html`<a href="/conditions/${x.slug}">${x.title}</a>`))}
     </li>
-    <li><a class="${active('/blog')}" href="/blog">Blog</a></li>
+    ${c.posts.length ? html`<li><a class="${active('/blog')}" href="/blog">Articles</a></li>` : ''}
     <li><a class="${active('/contact')}" href="/contact">Contact</a></li>
   </ul>`;
 }
@@ -76,10 +74,8 @@ function footer({ s, c }) {
         <h3>Quick links</h3>
         <ul>
           <li><a href="/about">About us</a></li>
-          <li><a href="/team">Our team</a></li>
-          <li><a href="/gallery">Gallery</a></li>
-          ${c.branches.length ? html`<li><a href="/branches">Branches</a></li>` : ''}
-          <li><a href="/blog">Blog</a></li>
+          <li><a href="/team">Dr. Sudha</a></li>
+          ${c.posts.length ? html`<li><a href="/blog">Articles</a></li>` : ''}
           <li><a href="/contact">Contact</a></li>
         </ul>
       </div>
@@ -92,7 +88,7 @@ function footer({ s, c }) {
         <ul class="footer-contact">
           ${ct.address ? html`<li>${icon('pin')}<span>${raw(escape(ct.address).replace(/\n/g, '<br>'))}</span></li>` : ''}
           ${ct.phone ? html`<li>${icon('phone')}<a href="${telHref(ct.phone)}">${ct.phone}</a></li>` : ''}
-          ${ct.email ? html`<li>${icon('mail')}<a href="mailto:${ct.email}">${ct.email}</a></li>` : ''}
+          ${ct.whatsapp ? html`<li>${icon('whatsapp')}<a href="${waHref(ct.whatsapp)}" target="_blank" rel="noopener">WhatsApp the clinic</a></li>` : ''}
           ${(ct.hours || []).map((h) => html`<li>${icon('clock')}<span>${h.days}: ${h.time}</span></li>`)}
         </ul>
       </div>
@@ -100,6 +96,7 @@ function footer({ s, c }) {
     <div class="footer-bottom">
       <div class="wrap">
         <span>© ${year} ${ft.copyright || clinic.name}</span>
+        <span>Built by DigiBillMate</span>
         ${clinic.registration ? html`<span>${clinic.registration}</span>` : ''}
       </div>
     </div>
@@ -114,7 +111,7 @@ export function layout(ctx, { title, description, body, image, jsonLd, path = '/
   const desc = description || seo.metaDescription || clinic.tagline || '';
   const ogImage = safeUrl(image || seo.ogImage);
   const absolute = (u) => (u.startsWith('/') ? origin + u : u);
-  const wa = ct.whatsapp ? waHref(ct.whatsapp, `Hi ${siteName}, I would like to book an appointment.`) : '';
+  const wa = ct.whatsapp ? waHref(ct.whatsapp, `Hi ${siteName}, I would like to ask about physiotherapy services.`) : '';
 
   return html`<!doctype html>
 <html lang="en">
@@ -137,18 +134,16 @@ ${ogImage ? html`<meta property="og:image" content="${absolute(ogImage)}">` : ''
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
-<link rel="stylesheet" href="/css/site.css?v=5">
+<link rel="stylesheet" href="/css/site.css?v=17">
 <style>${raw(themeStyle(s.theme))}</style>
 ${jsonLd ? raw(`<script type="application/ld+json">${JSON.stringify(jsonLd).replace(/</g, '\\u003c')}</script>`) : ''}
 </head>
 <body>
 <a class="skip-link" href="#main">Skip to content</a>
-${isOn(seo.previewBanner) && seo.previewText ? html`<div class="preview-bar">${seo.previewText}</div>` : ''}
 <div class="topbar">
   <div class="wrap topbar-inner">
     <div class="topbar-info">
       ${ct.hours?.[0] ? html`<span>${icon('clock')} ${ct.hours[0].days}: ${ct.hours[0].time}</span>` : ''}
-      ${ct.email ? html`<a href="mailto:${ct.email}">${icon('mail')} ${ct.email}</a>` : ''}
     </div>
     ${socialLinks(s.social)}
   </div>
@@ -159,13 +154,13 @@ ${isOn(seo.previewBanner) && seo.previewText ? html`<div class="preview-bar">${s
     <nav class="nav" id="site-nav" aria-label="Main">
       ${navigation(ctx, path)}
       <div class="nav-mobile-cta">
-        <a class="btn btn-accent btn-block" href="/contact#book">${s.hero.primaryLabel || 'Book Appointment'}</a>
-        ${ct.phone ? html`<a class="btn btn-outline btn-block" href="${telHref(ct.phone)}">${icon('phone')} Call ${ct.phone}</a>` : ''}
+        ${ct.phone ? html`<a class="btn btn-accent btn-block" href="${telHref(ct.phone)}">${icon('phone')} Call the clinic</a>` : ''}
+        ${wa ? html`<a class="btn btn-wa btn-block" href="${wa}" target="_blank" rel="noopener">${icon('whatsapp')} WhatsApp</a>` : ''}
       </div>
     </nav>
     <div class="header-actions">
       ${ct.phone ? html`<a class="header-phone" href="${telHref(ct.phone)}"><span class="icon-chip xs">${icon('phone')}</span><span><small>Call us</small>${ct.phone}</span></a>` : ''}
-      <a class="btn btn-accent header-book" href="/contact#book">${s.hero.primaryLabel || 'Book Appointment'}</a>
+      ${wa ? html`<a class="btn btn-accent header-book" href="${wa}" target="_blank" rel="noopener">${icon('whatsapp')} WhatsApp</a>` : ''}
       <button class="nav-toggle" type="button" aria-controls="site-nav" aria-expanded="false" aria-label="Open menu">${icon('menu', 'icon i-open')}${icon('close', 'icon i-close')}</button>
     </div>
   </div>
@@ -176,7 +171,6 @@ ${body}
 ${footer(ctx)}
 ${wa ? html`<div class="floating"><a class="fab fab-wa" href="${wa}" target="_blank" rel="noopener" aria-label="Chat on WhatsApp">${icon('whatsapp')}<span>Chat with us</span></a></div>` : ''}
 <nav class="mobile-bar" aria-label="Quick actions">
-  <a class="mb-btn mb-book" href="${path === '/' || path === '/contact' ? '#book' : '/contact#book'}">${icon('calendar')} ${s.hero.primaryLabel || 'Book Appointment'}</a>
   ${wa || ct.phone
     ? html`<div class="mb-row">
         ${wa ? html`<a class="mb-btn mb-wa" href="${wa}" target="_blank" rel="noopener">${icon('whatsapp')} WhatsApp</a>` : ''}

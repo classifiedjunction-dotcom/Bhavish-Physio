@@ -276,17 +276,6 @@ export const COLLECTIONS = [
     ],
   },
   {
-    key: 'gallery',
-    label: 'Gallery',
-    singular: 'photo',
-    titleField: 'title',
-    fields: [
-      { name: 'title', label: 'Caption', type: 'text', required: true },
-      { name: 'image', label: 'Photo', type: 'image' },
-      { name: 'category', label: 'Category', type: 'text' },
-    ],
-  },
-  {
     key: 'posts',
     label: 'Blog posts',
     singular: 'post',

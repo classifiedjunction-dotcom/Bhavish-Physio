@@ -3,15 +3,15 @@ import { markdown } from '../lib/markdown.js';
 import { aboutArt } from './art.js';
 import {
   icon, telHref, waHref, visual, avatar, sectionHead, pageHero, serviceCard, conditionCard, teamCard, postCard,
-  faqList, bookingForm, contactList, ctaBand, formatDate,
+  faqList, contactList, ctaBand, formatDate,
 } from './ui.js';
 
 const sideCta = ({ s }) => html`<aside class="side-card cta-card">
-  <span class="icon-chip accent">${icon('calendar')}</span>
-  <h3>Book an assessment</h3>
-  <p>Talk to a physiotherapist about your problem and get a clear treatment plan.</p>
-  <a class="btn btn-accent btn-block" href="/contact#book">${s.hero.primaryLabel || 'Book Appointment'}</a>
-  ${s.contact.phone ? html`<a class="btn btn-ghost-light btn-block" href="${telHref(s.contact.phone)}">${icon('phone')} ${s.contact.phone}</a>` : ''}
+  <span class="icon-chip accent">${icon('phone')}</span>
+  <h3>Speak with the clinic</h3>
+  <p>Call or WhatsApp to ask about physiotherapy services and availability.</p>
+  ${s.contact.phone ? html`<a class="btn btn-accent btn-block" href="${telHref(s.contact.phone)}">${icon('phone')} Call the clinic</a>` : ''}
+  ${s.contact.whatsapp ? html`<a class="btn btn-wa btn-block" href="${waHref(s.contact.whatsapp)}" target="_blank" rel="noopener">${icon('whatsapp')} WhatsApp</a>` : ''}
 </aside>`;
 
 const sideLinks = (title, items, base, currentSlug) => html`<aside class="side-card">
@@ -24,6 +24,9 @@ const sideLinks = (title, items, base, currentSlug) => html`<aside class="side-c
 export function aboutPage(ctx) {
   const { s, c } = ctx;
   const a = s.about;
+  const aboutPoints = (a.points || []).map((point) =>
+    point === 'Clinic hours listed every day of the week' ? 'Call or WhatsApp to confirm current clinic hours' : point,
+  );
   return {
     title: s.sections.aboutTitle || 'About us',
     description: a.body,
@@ -39,7 +42,7 @@ ${pageHero('About us', [['About us']], s.clinic.tagline)}
     <div class="split-copy">
       ${sectionHead(s.sections, 'about', { center: false })}
       <div class="prose">${raw(markdown(a.body))}</div>
-      ${a.points?.length ? html`<ul class="check-list">${a.points.map((p) => html`<li>${icon('check')}<span>${p}</span></li>`)}</ul>` : ''}
+      ${aboutPoints.length ? html`<ul class="check-list">${aboutPoints.map((p) => html`<li>${icon('check')}<span>${p}</span></li>`)}</ul>` : ''}
     </div>
   </div>
 </section>
@@ -120,7 +123,7 @@ export function conditionsPage(ctx) {
     body: html`
 ${pageHero(s.sections.conditionsTitle || 'Conditions we treat', [['Conditions']], s.sections.conditionsIntro)}
 <section class="section"><div class="wrap"><div class="grid grid-3 conditions-grid">${c.conditions.map(conditionCard)}</div>
-<p class="center-note">Don’t see your condition? <a href="/contact#book">Talk to us</a> — we treat many more.</p></div></section>
+<p class="center-note">Not sure what you need? <a href="/contact">Call or WhatsApp the clinic</a>.</p></div></section>
 ${ctaBand(ctx)}`,
   };
 }
@@ -182,25 +185,6 @@ ${pageHero(s.sections.teamTitle || 'Our team', [['About', '/about'], ['Team']], 
   )}</div>
 </section>
 ${ctaBand(ctx)}`,
-  };
-}
-
-export function galleryPage(ctx) {
-  const { c } = ctx;
-  return {
-    title: 'Gallery',
-    description: 'A look inside our clinic.',
-    body: html`
-${pageHero('Gallery', [['About', '/about'], ['Gallery']], 'A look inside our clinic and treatment spaces.')}
-<section class="section">
-  <div class="wrap gallery-grid">${c.gallery.map((g, i) => {
-    const src = safeUrl(g.image);
-    return src
-      ? html`<figure class="gallery-item reveal"><button type="button" data-lightbox="${src}" data-caption="${g.title}"><img src="${src}" alt="${g.title}" loading="lazy"></button><figcaption>${g.title}</figcaption></figure>`
-      : html`<figure class="gallery-item reveal">${visual('', 'image', g.title, i)}<figcaption>${g.title}<small>Photo coming soon</small></figcaption></figure>`;
-  })}</div>
-</section>
-<dialog class="lightbox" id="lightbox"><button type="button" class="lightbox-close" aria-label="Close">${icon('close')}</button><img alt=""><p></p></dialog>`,
   };
 }
 
@@ -310,35 +294,30 @@ ${pageHero(b.name, [['Branches', '/branches'], [b.name]], b.description)}
   };
 }
 
-export function contactPage(ctx, { booked = false } = {}) {
+export function contactPage(ctx) {
   const { s, c } = ctx;
   const ct = s.contact;
-  const wa = ct.whatsapp ? waHref(ct.whatsapp, `Hi ${s.clinic.name}, I would like to book an appointment.`) : '';
+  const wa = ct.whatsapp ? waHref(ct.whatsapp, `Hi ${s.clinic.name}, I would like to ask about physiotherapy.`) : '';
   return {
-    title: 'Contact & Booking',
-    description: `Book an appointment or get in touch with ${s.clinic.name}.`,
+    title: 'Contact the Clinic',
+    description: `Call or WhatsApp ${s.clinic.name} for physiotherapy information and availability.`,
     body: html`
-${pageHero('Contact us', [['Contact']], s.booking.intro)}
+${pageHero('Contact the clinic', [['Contact']], 'Call or WhatsApp to ask about physiotherapy services, clinic hours and availability.')}
 <section class="section">
   <div class="wrap">
-    <div class="grid grid-4 contact-cards">
+    <div class="grid grid-3 contact-cards">
       ${ct.phone ? html`<a class="card contact-card" href="${telHref(ct.phone)}"><span class="icon-chip">${icon('phone')}</span><strong>Call us</strong><span>${ct.phone}</span></a>` : ''}
       ${wa ? html`<a class="card contact-card" href="${wa}" target="_blank" rel="noopener"><span class="icon-chip wa">${icon('whatsapp')}</span><strong>WhatsApp</strong><span>Chat with our team</span></a>` : ''}
-      ${ct.email ? html`<a class="card contact-card" href="mailto:${ct.email}"><span class="icon-chip">${icon('mail')}</span><strong>Email</strong><span>${ct.email}</span></a>` : ''}
       ${safeUrl(ct.mapLink) ? html`<a class="card contact-card" href="${safeUrl(ct.mapLink)}" target="_blank" rel="noopener"><span class="icon-chip">${icon('pin')}</span><strong>Visit us</strong><span>Get directions</span></a>` : ''}
     </div>
   </div>
 </section>
-<section class="section dark booking-section" id="book">
+<section class="section dark booking-section" id="contact-options">
   <div class="wrap booking-grid">
-    <div class="booking-info">
-      <span class="eyebrow">Appointments</span>
-      <h2>${s.booking.title || 'Book an appointment'}</h2>
-      ${contactList(ctx, { light: true })}
-    </div>
-    <div class="form-card">
-      ${booked ? html`<div class="form-success">${icon('check')}<p>${s.booking.successMessage}</p></div>` : ''}
-      ${bookingForm(ctx)}
+    <div class="booking-info"><span class="eyebrow">Contact</span><h2>We’re here to help</h2><p>Contact the clinic directly to ask a question or check availability.</p>${contactList(ctx, { light: true })}</div>
+    <div class="contact-options-card">
+      ${ct.phone ? html`<a class="btn btn-accent btn-lg btn-block" href="${telHref(ct.phone)}">${icon('phone')} Call the clinic</a>` : ''}
+      ${wa ? html`<a class="btn btn-wa btn-lg btn-block" href="${wa}" target="_blank" rel="noopener">${icon('whatsapp')} WhatsApp the clinic</a>` : ''}
     </div>
   </div>
 </section>
