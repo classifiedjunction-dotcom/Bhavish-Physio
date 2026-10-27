@@ -1,7 +1,7 @@
 {
   // Public website: server-rendered pages built from content in D1.
   "name": "physio-site",
-  "account_id": "8b68d52ab01ca04a932194213c7adfbd",
+  "account_id": "72bedb14acf9b564ab877df3c859103a",
   "main": "src/index.js",
   "compatibility_date": "2025-09-01",
   "assets": {
@@ -12,7 +12,7 @@
     {
       "binding": "DB",
       "database_name": "physio-db",
-      "database_id": "a8e68e1f-cf08-4d1a-bb3f-bd5730315faf",
+      "database_id": "2430b15f-2a47-4b4c-a54d-75be4c032337",
       "migrations_dir": "../db/migrations"
     }
   ],
