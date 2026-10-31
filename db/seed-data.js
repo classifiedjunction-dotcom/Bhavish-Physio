@@ -10,8 +10,8 @@ export const settings = {
     registration: '',
   },
   contact: {
-    phone: '+91 866 727 2971',
-    whatsapp: '918667272971',
+    phone: '+91 99627 82374',
+    whatsapp: '919962782374',
     email: '',
     address: 'No. 5, 7th Avenue, Vanagaram Main Road, Metro Nagar, Alappakkam,\nLandmark: Near Jeeva Complex, Chennai',
     city: 'Chennai',
@@ -292,7 +292,7 @@ const branches = [
   {
     name: 'Bhavisha Physiotherapy Clinic · Porur',
     address: 'No. 5, 7th Avenue, Vanagaram Main Road, Metro Nagar, Alappakkam,\nNear Jeeva Complex, Chennai',
-    phone: '+91 866 727 2971',
+    phone: '+91 99627 82374',
     hours: 'Mon–Sat 9:00 AM – 10:00 PM',
     mapEmbed: 'https://www.google.com/maps?q=13.042784828745653,80.16090027987957&output=embed',
     mapLink: 'https://www.google.com/maps/dir/?api=1&destination=13.042784828745653,80.16090027987957',

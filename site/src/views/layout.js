@@ -96,7 +96,6 @@ function footer({ s, c }) {
     <div class="footer-bottom">
       <div class="wrap">
         <span>© ${year} ${ft.copyright || clinic.name}</span>
-        <span>Built by DigiBillMate</span>
         ${clinic.registration ? html`<span>${clinic.registration}</span>` : ''}
       </div>
     </div>
